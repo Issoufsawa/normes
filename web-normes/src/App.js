@@ -3,6 +3,9 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NormesPubliques from "./pages/NormesPubliques";
+import AjouterNorme from "./pages/AjouterNorme";
+
+
 function App() {
   return (
     <Routes>
@@ -14,10 +17,15 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminDashboard />
+          
           </ProtectedRoute>
         }
       />
       <Route path="*" element={<LoginPage />} />
+              <Route path="/ajouter-norme" element={
+                <ProtectedRoute><AjouterNorme /></ProtectedRoute>} />
+                 <Route path="/créer-admin" element={
+                <ProtectedRoute><AjouterNorme /></ProtectedRoute>} />
     </Routes>
   );
 }

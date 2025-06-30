@@ -87,15 +87,20 @@ export default function NormesPubliquesPage() {
 
   <div className="container" >
     <form className="row g-3 justify-content-center">
-      <div className="col-md-3 col-12">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Type de text"
-          name="input1"
-          // value={...} onChange={...} à gérer si besoin
-        />
-      </div>
+     <div className="col-md-3 col-12">
+    <select className="form-control" name="input1">
+    <option value="">Type de texte</option>
+    <option value="code">code</option>
+    <option value="lois">lois</option>
+    <option value="règlement">règlement</option>
+    <option value="circulaire">circulaire</option>
+    <option value="ordonance">ordonnance</option>
+    <option value="décret">décret</option>
+    <option value="arrêté">arrêté</option>
+    <option value="autre">Autre</option>
+     </select>
+        </div> 
+
       <div className="col-md-3 col-12">
         <input
           type="text"
@@ -104,14 +109,16 @@ export default function NormesPubliquesPage() {
           name="input2"
         />
       </div>
-      <div className="col-md-3 col-12">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Pays ou Région"
-          name="input3"
-        />
-      </div>
+    <div className="col-md-3 col-12">
+    <select className="form-control" name="input3">
+    <option value="">Pays ou Région</option>
+    <option value="ci">COTE D'IVOIRE</option>
+    <option value="cm">CAMEROUN</option>
+    <option value="bn">BENIN</option>
+    <option value="gb">GABON</option>
+    </select>
+    </div>
+
       <div className="col-md-2 col-12 d-grid">
         <button type="submit" className="btn btn-primary w-100">
           Appliquer 
@@ -126,43 +133,54 @@ export default function NormesPubliquesPage() {
 
       {/* Tableau */}
       <section className="featured-section py-5">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-12">
-              <div className="custom-block bg-white shadow-lg p-4">
-                <div className="table-responsive">
-                  <table className="table table-bordered table-striped table-hover w-100 mb-0">
-                    <thead className="table-dark">
-                      <tr>
-                        {['Id','Titre','Catégorie','Date','Mot-clés'].map(h => (
-                          <th key={h}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.length === 0 ? (
-                        <tr>
-                          <td colSpan="5" className="text-center p-4">
-                            Aucune norme trouvée.
-                          </td>
-                        </tr>
-                      ) : filtered.map(n => (
-                        <tr key={n.id}>
-                          <td>{n.id}</td>
-                          <td>{n.titre}</td>
-                          <td>{n.categorie}</td>
-                          <td>{n.date_pub}</td>
-                          <td>{n.mots_cles}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+  <div className="container-fluid">
+    <div className="row justify-content-center">
+      <div className="col-12">
+        <div className="custom-block bg-white shadow-lg p-4">
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped table-hover w-100 mb-0" style={{ minWidth: '1500px' }}>
+              <thead className="table-dark">
+                <tr>
+                  {[
+                   'Description du texte','Référence du texte','Documents concernés','Domaines',
+                    'Type de texte','Domaine d\'activité','Pays ou Région','Source','Fichier',
+                    'Validité du texte','Télécharger'
+                  ].map(h => (
+                    <th key={h}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="12" className="text-center p-4">
+                      Aucune norme trouvée.
+                    </td>
+                  </tr>
+                ) : filtered.map(n => (
+                  <tr key={n.id}>
+                    <td>{n.titre}</td>
+                    <td>{n.categorie}</td>
+                    <td>{n.date_pub}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                    <td>{n.mots_cles}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Footer */}
       <footer className="site-footer section-padding bg-light py-4">

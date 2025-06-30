@@ -32,7 +32,7 @@ const getAllNormes = (req, res) => {
 const createNorme = (req, res) => {
   const { titre, categorie, description, date_pub, mots_cles } = req.body;
   const sql =
-    "INSERT INTO normes (titre, categorie, description, date_pub, mots_cles) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO normes (domaine, categorie, description, date_pub, mots_cles) VALUES (?, ?, ?, ?, ?)";
   db.query(
     sql,
     [titre, categorie, description, date_pub, mots_cles],

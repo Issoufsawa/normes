@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../utils/api";
+import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
   const [normes, setNormes] = useState([]);
-  const [form, setForm] = useState({
-    titre: "",
-    categorie: "",
-    description: "",
-    date_pub: "",
-    mots_cles: "",
-  });
-  const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -26,33 +19,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await api.put(`/normes/${editingId}`, form);
-        setEditingId(null);
-      } else {
-        await api.post("/normes", form);
-      }
-      setForm({
-        titre: "",
-        categorie: "",
-        description: "",
-        date_pub: "",
-        mots_cles: "",
-      });
-      fetchNormes();
-    } catch (err) {
-      console.error("Erreur lors de l’enregistrement :", err);
-      alert("Erreur lors de l’enregistrement");
-    }
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm("Supprimer cette norme ?")) return;
     try {
@@ -65,15 +31,9 @@ export default function AdminDashboard() {
   };
 
   const handleEdit = (norme) => {
-    setEditingId(norme.id);
-    setForm({
-      titre: norme.titre,
-      categorie: norme.categorie,
-      description: norme.description || "",
-      date_pub: norme.date_pub,
-      mots_cles: norme.mots_cles,
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Redirection vers une page ou ouverture d’un modal pourrait se faire ici
+    console.log("Norme à modifier :", norme);
+    alert("Fonction de modification à venir !");
   };
 
   const filteredNormes = normes.filter(
@@ -88,190 +48,58 @@ export default function AdminDashboard() {
     <>
       {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg">
-  <div className="container">
-    <a className="navbar-brand" href="/">
-      <i className="bi-back"></i>
-      <span>Admin Normes</span>
-    </a>
+        <div className="container">
+          <a className="navbar-brand">
+            <i className="bi-back"></i>
+            <span>Admin Normes</span>
+          </a>
 
-    <div className="ms-auto">
-      <div className="dropdown">
-        <button
-          className="btn btn-outline-secondary dropdown-toggle"
-          type="button"
-          id="userDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <i className="bi-person-circle me-2"></i>Compte
-        </button>
-        <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-          <li>
-            <button
-              className="dropdown-item text-danger"
-              onClick={() => {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
-              }}
-            >
-              🔒 Déconnexion
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
+        <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
+  {[
+    { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
+    { text: "Créer un admin", to:  "/créer-admin" },
+    { text: "Liste des normes archivistiques", to: "/admin" },
+    { text: "Valider des normes archivistiques", to: "#" },
+  ].map(({ text, to }) => (
+    <li key={text} className="nav-item">
+      <Link className="nav-link text-dark" to={to}>
+        {text}
+      </Link>
+    </li>
+  ))}
+</ul>
 
-{/* FORMULAIRE */}
- <h2 className="text-center mb-5">
-      {editingId ? "✏️ Modifier une norme" : "➕ Créer une nouvelle norme"}
-    </h2>
-
-<section className="featured-section bg-light py-5">
-  <div className="container">
-   
-    <div className="mx-auto" style={{ maxWidth: "700px" }}>
-      <form className="row g-3" onSubmit={handleSubmit}>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="titre"
-            placeholder="Domaine"
-            value={form.titre}
-            onChange={handleChange}
-            required
-          />
+          <div className="ms-auto">
+            <div className="dropdown">
+              <button
+                className="btn btn-outline-secondary dropdown-toggle"
+                type="button"
+                id="userDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="bi-person-circle me-2"></i>Compte
+              </button>
+              <ul
+                className="dropdown-menu dropdown-menu-end"
+                aria-labelledby="userDropdown"
+              >
+                <li>
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      window.location.href = "/login";
+                    }}
+                  >
+                    🔒 Déconnexion
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="categorie"
-            placeholder="Type de text"
-            value={form.categorie}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-12">
-          <textarea
-            className="form-control"
-            name="description"
-            placeholder="Description du text"
-            rows="2"
-            value={form.description}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-       
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="mots_cles"
-            placeholder="Source"
-            value={form.mots_cles}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="titre"
-            placeholder="Domaines d'activité"
-            value={form.titre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="categorie"
-            placeholder="Documents concernés"
-            value={form.categorie}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="titre"
-            placeholder="Réference du text"
-            value={form.titre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            name="titre"
-            placeholder="Pays ou région"
-            value={form.titre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-         <div className="col-md-6">
-            <label htmlFor="date_pub" className="form-label">Validité du text</label>
-          <input
-            type="date"
-            className="form-control"
-            name="date_pub"
-            value={form.date_pub}
-            onChange={handleChange}
-            required
-          />
-        </div>
-    
-      <div className="col-md-6">
-          <label htmlFor="categorie" className="form-label">Joindre un fichier</label>
-         <input
-           type="file"
-           className="form-control"
-           name="categorie"
-           id="categorie"
-           onChange={handleChange}
-            required
-         />
-</div>
-
-
-        <div className="col-12 d-flex gap-2">
-          <button className="btn btn-primary" type="submit">
-            {editingId ? "Mettre à jour" : "Ajouter"}
-          </button>
-          {editingId && (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                setEditingId(null);
-                setForm({
-                  titre: "",
-                  categorie: "",
-                  description: "",
-                  date_pub: "",
-                  mots_cles: "",
-                });
-              }}
-            >
-              Annuler
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
-  </div>
-</section>
+      </nav>
 
       {/* TABLEAU */}
       <section className="featured-section">
@@ -291,16 +119,16 @@ export default function AdminDashboard() {
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>
-                  <th>Description du text</th>
-                  <th>Référence du text</th>
+                  <th>Description du texte</th>
+                  <th>Référence du texte</th>
                   <th>Documents concernés</th>
                   <th>Domaines</th>
-                  <th>Type de text</th>
+                  <th>Type de texte</th>
                   <th>Domaine d'activité</th>
                   <th>Pays ou Région</th>
                   <th>Source</th>
                   <th>Fichier</th>
-                  <th>Validité du text</th>
+                  <th>Validité du texte</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -310,13 +138,13 @@ export default function AdminDashboard() {
                     <td>{n.id}</td>
                     <td>{n.titre}</td>
                     <td>{n.categorie}</td>
-                    <td>{}</td>
-                    <td>{}</td>
-                    <td>{}</td>
-                    <td>{}</td>
-                    <td>{}</td>
+                    <td>{/* Documents concernés */}</td>
+                    <td>{/* Domaines */}</td>
+                    <td>{/* Type de texte */}</td>
+                    <td>{/* Domaine d'activité */}</td>
+                    <td>{/* Pays ou Région */}</td>
                     <td>{n.mots_cles}</td>
-                    <td>{}</td>
+                    <td>{/* Fichier */}</td>
                     <td>{n.date_pub}</td>
                     <td>
                       <button
@@ -361,5 +189,3 @@ export default function AdminDashboard() {
     </>
   );
 }
-
-
