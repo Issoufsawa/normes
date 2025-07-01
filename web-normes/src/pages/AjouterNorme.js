@@ -1,35 +1,79 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import api from "../utils/api";
 import { Link } from "react-router-dom";
 
 export default function AjouterNorme() {
+  const fileInputRef = useRef(null);
+
   const [form, setForm] = useState({
-    titre: "",
+    domaine: "",
     categorie: "",
-    description: "",
+    description_du_texte: "",
+    source: "",
+    reference_du_texte: "",
+    document_concerne: "",
+    domaine_activite: "",
     date_pub: "",
-    mots_cles: "",
+    pays_ou_region: "",
+    fichier: null,
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (name === "fichier") {
+      setForm((prev) => ({ ...prev, [name]: files[0] }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("⚠️ Vous devez être connecté pour ajouter une norme !");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("domaine", form.domaine);
+    formData.append("categorie", form.categorie);
+    formData.append("description_du_texte", form.description_du_texte);
+    formData.append("source", form.source);
+    formData.append("reference_du_texte", form.reference_du_texte);
+    formData.append("document_concerne", form.document_concerne);
+    formData.append("domaine_activite", form.domaine_activite);
+    formData.append("date_pub", form.date_pub);
+    formData.append("pays_ou_region", form.pays_ou_region);
+    formData.append("fichier", form.fichier);
+
     try {
-      await api.post("/normes", form);
-      alert("Norme ajoutée avec succès !");
-      setForm({
-        titre: "",
-        categorie: "",
-        description: "",
-        date_pub: "",
-        mots_cles: "",
+      await api.post("/normes", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Ne pas fixer 'Content-Type', Axios gère ça automatiquement
+        },
       });
+      
+
+      alert("✅ Norme ajoutée avec succès !");
+      setForm({
+        domaine: "",
+        categorie: "",
+        description_du_texte: "",
+        source: "",
+        reference_du_texte: "",
+        document_concerne: "",
+        domaine_activite: "",
+        date_pub: "",
+        pays_ou_region: "",
+        fichier: null,
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
-      console.error("Erreur lors de l’ajout :", err);
-      alert("Erreur lors de l’ajout de la norme");
+      console.error("❌ Erreur lors de l’ajout :", err);
+      alert("❌ Erreur lors de l’ajout de la norme.");
     }
   };
 
@@ -38,25 +82,25 @@ export default function AjouterNorme() {
       {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg">
         <div className="container">
-          <a className="navbar-brand">
+          <a className="navbar-brand" href="#">
             <i className="bi-back"></i>
             <span>Admin Normes</span>
           </a>
 
-        <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
-  {[
-    { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
-    { text: "Créer un admin", to: "/créer-admin" },
-    { text: "Liste des normes archivistiques", to: "/admin" },
-    { text: "Valider des normes archivistiques", to: "#" },
-  ].map(({ text, to }) => (
-    <li key={text} className="nav-item">
-      <Link className="nav-link text-dark" to={to}>
-        {text}
-      </Link>
-    </li>
-  ))}
-</ul>
+          <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
+            {[
+              { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
+              { text: "Créer un admin", to: "/créer-admin" },
+              { text: "Liste des normes archivistiques", to: "/admin" },
+              { text: "Valider des normes archivistiques", to: "#" },
+            ].map(({ text, to }) => (
+              <li key={text} className="nav-item">
+                <Link className="nav-link text-dark" to={to}>
+                  {text}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
           <div className="ms-auto">
             <div className="dropdown">
@@ -90,7 +134,7 @@ export default function AjouterNorme() {
         </div>
       </nav>
 
-            <h2 className="text-center mb-5">➕ Créer une nouvelle norme</h2>
+      <h2 className="text-center mb-5">➕ Créer une nouvelle norme</h2>
       <section className="featured-section bg-light py-5">
         <div className="container">
           <div className="mx-auto" style={{ maxWidth: "700px" }}>
@@ -101,7 +145,7 @@ export default function AjouterNorme() {
                   className="form-control"
                   name="domaine"
                   placeholder="Domaine"
-                  value={form.titre}
+                  value={form.domaine}
                   onChange={handleChange}
                   required
                 />
@@ -120,7 +164,7 @@ export default function AjouterNorme() {
                   <option value="lois">lois</option>
                   <option value="règlement">règlement</option>
                   <option value="circulaire">circulaire</option>
-                  <option value="ordonance">ordonnance</option>
+                  <option value="ordonnance">ordonnance</option>
                   <option value="décret">décret</option>
                   <option value="arrêté">arrêté</option>
                   <option value="autre">Autre</option>
@@ -133,7 +177,7 @@ export default function AjouterNorme() {
                   name="description_du_texte"
                   placeholder="Description du texte"
                   rows="2"
-                  value={form.description}
+                  value={form.description_du_texte}
                   onChange={handleChange}
                 ></textarea>
               </div>
@@ -144,38 +188,40 @@ export default function AjouterNorme() {
                   className="form-control"
                   name="source"
                   placeholder="Source"
-                  value={form.mots_cles}
+                  value={form.source}
                   onChange={handleChange}
                 />
               </div>
 
-               <div className="col-md-6">
+              <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
                   name="reference_du_texte"
                   placeholder="Référence du texte"
-                  value={form.mots_cles}
+                  value={form.reference_du_texte}
                   onChange={handleChange}
                 />
               </div>
-               <div className="col-md-6">
+
+              <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
                   name="document_concerne"
                   placeholder="Document concernés"
-                  value={form.mots_cles}
+                  value={form.document_concerne}
                   onChange={handleChange}
                 />
               </div>
-               <div className="col-md-6">
+
+              <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
                   name="domaine_activite"
                   placeholder="Domaine d'activité"
-                  value={form.mots_cles}
+                  value={form.domaine_activite}
                   onChange={handleChange}
                 />
               </div>
@@ -193,29 +239,37 @@ export default function AjouterNorme() {
                   required
                 />
               </div>
+
               <div className="col-md-6 col-12">
-                <select className="form-control" name="input3">
-                <option value="">Pays ou Région</option>
-                 <option value="ci">COTE D'IVOIRE</option>
-                 <option value="cm">CAMEROUN</option>
-                 <option value="bn">BENIN</option>
-                 <option value="gb">GABON</option>
-                  </select>
-          </div>
+                <select
+                  className="form-control"
+                  name="pays_ou_region"
+                  value={form.pays_ou_region}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Pays ou Région</option>
+                  <option value="COTE D'IVOIRE">COTE D'IVOIRE</option>
+                  <option value="CAMEROUN">CAMEROUN</option>
+                  <option value="BENIN">BENIN</option>
+                  <option value="GABON">GABON</option>
+                </select>
+              </div>
+
               <div className="col-md-6">
-          <label htmlFor="categorie" className="form-label">Joindre un fichier</label>
-         <input
-           type="file"
-           className="form-control"
-           name="categorie"
-           id="categorie"
-           onChange={handleChange}
-            required
-           />
-         
-                  </div>
-
-
+                <label htmlFor="fichier" className="form-label">
+                  Joindre un fichier
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  name="fichier"
+                  id="fichier"
+                  onChange={handleChange}
+                  required
+                  ref={fileInputRef}
+                />
+              </div>
 
               <div className="col-12 d-flex gap-2">
                 <button className="btn btn-primary" type="submit">

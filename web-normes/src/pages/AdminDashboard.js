@@ -37,12 +37,12 @@ export default function AdminDashboard() {
   };
 
   const filteredNormes = normes.filter(
-    (n) =>
-      n.titre.toLowerCase().includes(search.toLowerCase()) ||
-      n.categorie.toLowerCase().includes(search.toLowerCase()) ||
-      n.mots_cles.toLowerCase().includes(search.toLowerCase()) ||
-      n.date_pub.includes(search)
-  );
+  (n) =>
+    n.titre?.toLowerCase().includes(search.toLowerCase()) ||
+    n.categorie?.toLowerCase().includes(search.toLowerCase()) ||
+    n.mots_cles?.toLowerCase().includes(search.toLowerCase()) ||
+    n.date_pub?.includes(search)
+);
 
   return (
     <>
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
             <table className="table table-bordered table-hover table-striped">
               <thead className="table-dark">
                 <tr>
-                  <th>ID</th>
+
                   <th>Description du texte</th>
                   <th>Référence du texte</th>
                   <th>Documents concernés</th>
@@ -135,17 +135,17 @@ export default function AdminDashboard() {
               <tbody>
                 {filteredNormes.map((n) => (
                   <tr key={n.id}>
-                    <td>{n.id}</td>
-                    <td>{n.titre}</td>
+                    <td>{n.description_du_texte}</td>
+                    <td>{n.reference_du_texte}</td>
+                    <td>{n.document_concerne}</td>
+                    <td>{n.domaine}</td>
                     <td>{n.categorie}</td>
-                    <td>{/* Documents concernés */}</td>
-                    <td>{/* Domaines */}</td>
-                    <td>{/* Type de texte */}</td>
-                    <td>{/* Domaine d'activité */}</td>
-                    <td>{/* Pays ou Région */}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{/* Fichier */}</td>
+                    <td>{n.domaine_activite}</td>
+                    <td>{n.pays_ou_region}</td>
+                    <td>{n.source}</td>
+                    <td>{n.fichier}</td>
                     <td>{n.date_pub}</td>
+                  
                     <td>
                       <button
                         className="btn btn-sm btn-outline-primary me-2"

@@ -1,64 +1,98 @@
 const db = require("../db");
+const path = require("path");
 
 // GET avec filtres
 const getAllNormes = (req, res) => {
-  const { categorie, mots_cles, date_pub } = req.query;
+  const { categorie, source, date_pub } = req.query;
   let sql = "SELECT * FROM normes WHERE 1=1";
-  let params = [];
+  const params = [];
 
   if (categorie) {
     sql += " AND categorie = ?";
     params.push(categorie);
   }
-
-  if (mots_cles) {
-    sql += " AND (titre LIKE ? OR description LIKE ? OR mots_cles LIKE ?)";
-    const like = `%${mots_cles}%`;
-    params.push(like, like, like);
+  if (source) {
+    sql += " AND (source LIKE ? OR reference_du_texte LIKE ?)";
+    const like = `%${source}%`;
+    params.push(like, like);
   }
-
   if (date_pub) {
     sql += " AND date_pub = ?";
     params.push(date_pub);
   }
 
   db.query(sql, params, (err, result) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) return res.status(500).json({ error: err.message });
     res.json(result);
   });
 };
 
 // POST - Créer une norme
 const createNorme = (req, res) => {
-  const { titre, categorie, description, date_pub, mots_cles } = req.body;
-  const sql =
-    "INSERT INTO normes (domaine, categorie, description, date_pub, mots_cles) VALUES (?, ?, ?, ?, ?)";
-  db.query(
-    sql,
-    [titre, categorie, description, date_pub, mots_cles],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res
-        .status(201)
-        .json({ message: "Norme créée avec succès", id: result.insertId });
-    }
-  );
+  const {
+    domaine,
+    categorie,
+    description_du_texte,
+    source,
+    reference_du_texte,
+    document_concerne,
+    domaine_activite,
+    date_pub,
+    pays_ou_region,
+  } = req.body;
+  const fichier = req.file ? req.file.filename : null;
+
+  const sql = `
+    INSERT INTO normes (
+      domaine, categorie, description_du_texte, source,
+      reference_du_texte, document_concerne, domaine_activite,
+      date_pub, pays_ou_region, fichier
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    domaine, categorie, description_du_texte, source,
+    reference_du_texte, document_concerne, domaine_activite,
+    date_pub, pays_ou_region, fichier,
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: "Norme créée avec succès", id: result.insertId });
+  });
 };
 
 // PUT - Modifier une norme
 const updateNorme = (req, res) => {
   const { id } = req.params;
-  const { titre, categorie, description, date_pub, mots_cles } = req.body;
-  const sql =
-    "UPDATE normes SET titre = ?, categorie = ?, description = ?, date_pub = ?, mots_cles = ? WHERE id = ?";
-  db.query(
-    sql,
-    [titre, categorie, description, date_pub, mots_cles, id],
-    (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Norme mise à jour" });
-    }
-  );
+  const {
+    domaine, categorie, description_du_texte, source,
+    reference_du_texte, document_concerne, domaine_activite,
+    date_pub, pays_ou_region
+  } = req.body;
+  const fichier = req.file ? req.file.filename : null;
+
+  let sql = `
+    UPDATE normes SET
+      domaine = ?, categorie = ?, description_du_texte = ?, source = ?,
+      reference_du_texte = ?, document_concerne = ?, domaine_activite = ?,
+      date_pub = ?, pays_ou_region = ?
+  `;
+  const values = [
+    domaine, categorie, description_du_texte, source,
+    reference_du_texte, document_concerne, domaine_activite,
+    date_pub, pays_ou_region
+  ];
+  if (fichier) {
+    sql += ", fichier = ?";
+    values.push(fichier);
+  }
+  sql += " WHERE id = ?";
+  values.push(id);
+
+  db.query(sql, values, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Norme mise à jour avec succès" });
+  });
 };
 
 // DELETE - Supprimer une norme
@@ -66,8 +100,17 @@ const deleteNorme = (req, res) => {
   const { id } = req.params;
   const sql = "DELETE FROM normes WHERE id = ?";
   db.query(sql, [id], (err) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) return res.status(500).json({ error: err.message });
     res.json({ message: "Norme supprimée" });
+  });
+};
+
+// GET - Télécharger un fichier
+const downloadFile = (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(__dirname, "../uploads", filename);
+  res.download(filePath, filename, (err) => {
+    if (err) res.status(404).json({ error: "Fichier introuvable" });
   });
 };
 
@@ -76,4 +119,5 @@ module.exports = {
   createNorme,
   updateNorme,
   deleteNorme,
+  downloadFile,
 };

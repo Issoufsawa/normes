@@ -2,13 +2,18 @@ import { useState } from "react";
 import api from "../utils/api";
 import { Link } from "react-router-dom";
 
-export default function AjouterNorme() {
+export default function CreAdmin() {
   const [form, setForm] = useState({
-    titre: "",
-    categorie: "",
-    description: "",
-    date_pub: "",
-    mots_cles: "",
+    civilite: "",
+    nom: "",
+    prenoms: "",
+    pays: "",
+    type_utilisateur: "",
+    fonction: "",
+    whatsapp: "",
+    email: "",
+    login: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -18,18 +23,23 @@ export default function AjouterNorme() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/normes", form);
-      alert("Norme ajoutée avec succès !");
+      await api.post("/utilisateurs", form);
+      alert("✅ Administrateur créé avec succès !");
       setForm({
-        titre: "",
-        categorie: "",
-        description: "",
-        date_pub: "",
-        mots_cles: "",
+        civilite: "",
+        nom: "",
+        prenoms: "",
+        pays: "",
+        type_utilisateur: "",
+        fonction: "",
+        whatsapp: "",
+        email: "",
+        login: "",
+        password: "",
       });
     } catch (err) {
-      console.error("Erreur lors de l’ajout :", err);
-      alert("Erreur lors de l’ajout de la norme");
+      console.error("❌ Erreur lors de la création :", err);
+      alert("Erreur lors de la création de l'administrateur");
     }
   };
 
@@ -43,20 +53,20 @@ export default function AjouterNorme() {
             <span>Admin Normes</span>
           </a>
 
-        <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
-  {[
-    { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
-    { text: "Créer un admin", to: "#" },
-    { text: "Liste des normes archivistiques", to: "/admin" },
-    { text: "Valider des normes archivistiques", to: "#" },
-  ].map(({ text, to }) => (
-    <li key={text} className="nav-item">
-      <Link className="nav-link text-dark" to={to}>
-        {text}
-      </Link>
-    </li>
-  ))}
-</ul>
+          <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
+            {[
+              { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
+              { text: "Créer un admin", to: "#" },
+              { text: "Liste des normes archivistiques", to: "/admin" },
+              { text: "Valider des normes archivistiques", to: "#" },
+            ].map(({ text, to }) => (
+              <li key={text} className="nav-item">
+                <Link className="nav-link text-dark" to={to}>
+                  {text}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
           <div className="ms-auto">
             <div className="dropdown">
@@ -90,18 +100,46 @@ export default function AjouterNorme() {
         </div>
       </nav>
 
-            <h2 className="text-center mb-5">➕ Créer une nouvelle norme</h2>
+      <h2 className="text-center mb-5">👤 Créer un administrateur</h2>
+
       <section className="featured-section bg-light py-5">
         <div className="container">
           <div className="mx-auto" style={{ maxWidth: "700px" }}>
             <form className="row g-3" onSubmit={handleSubmit}>
               <div className="col-md-6">
+                <select
+                  className="form-control"
+                  name="civilite"
+                  value={form.civilite}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Civilité</option>
+                  <option value="M.">M.</option>
+                  <option value="Mme">Mme</option>
+                  <option value="Mlle">Mlle</option>
+                </select>
+              </div>
+
+              <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
-                  name="titre"
-                  placeholder="Domaine"
-                  value={form.titre}
+                  name="nom"
+                  placeholder="Nom"
+                  value={form.nom}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="text"
+                  className="form-control"
+                  name="prenoms"
+                  placeholder="Prénoms"
+                  value={form.prenoms}
                   onChange={handleChange}
                   required
                 />
@@ -110,54 +148,89 @@ export default function AjouterNorme() {
               <div className="col-md-6">
                 <select
                   className="form-control"
-                  name="categorie"
-                  value={form.categorie}
+                  name="pays"
+                  value={form.pays}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Type de texte</option>
-                  <option value="code">code</option>
-                  <option value="lois">lois</option>
-                  <option value="règlement">règlement</option>
-                  <option value="circulaire">circulaire</option>
-                  <option value="ordonance">ordonnance</option>
-                  <option value="décret">décret</option>
-                  <option value="arrêté">arrêté</option>
-                  <option value="autre">Autre</option>
+                  <option value="">Pays</option>
+                  <option value="CAMEROUN">CAMEROUN</option>
+                  <option value="COTE D'IVOIRE">COTE D'IVOIRE</option>
+                  <option value="BENIN">BENIN</option>
+                  <option value="GABON">GABON</option>
                 </select>
               </div>
 
-              <div className="col-12">
-                <textarea
+              <div className="col-md-6">
+                <select
                   className="form-control"
-                  name="description"
-                  placeholder="Description du texte"
-                  rows="2"
-                  value={form.description}
+                  name="type_utilisateur"
+                  value={form.type_utilisateur}
                   onChange={handleChange}
-                ></textarea>
+                  required
+                >
+                  <option value="">Type d'utilisateur</option>
+                  <option value="Utilisateur inscrit">Utilisateur inscrit</option>
+                  <option value="Administrateur pays">Administrateur pays</option>
+                  <option value="Super Administrateur">Super Administrateur</option>
+                </select>
               </div>
 
               <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
-                  name="mots_cles"
-                  placeholder="Source"
-                  value={form.mots_cles}
+                  name="fonction"
+                  placeholder="Fonction"
+                  value={form.fonction}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
               <div className="col-md-6">
-                <label htmlFor="date_pub" className="form-label">
-                  Validité du texte
-                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  name="whatsapp"
+                  placeholder="Numéro WhatsApp"
+                  value={form.whatsapp}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="col-md-6">
                 <input
                   type="text"
                   className="form-control"
-                  name="date_pub"
-                  value={form.date_pub}
+                  name="login"
+                  placeholder="Login"
+                  value={form.login}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="col-md-6">
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  placeholder="Mot de passe"
+                  value={form.password}
                   onChange={handleChange}
                   required
                 />

@@ -33,16 +33,17 @@
                 {filteredNormes.map((n) => (
                   <tr key={n.id}>
                     <td>{n.id}</td>
-                    <td>{n.titre}</td>
+                    <td>{n.description_du_texte}</td>
+                    <td>{n.reference_du_texte}</td>
+                    <td>{n.document_concerne}</td>
+                    <td>{n.domaine}</td> 
                     <td>{n.categorie}</td>
-                    <td>{/* Documents concernés */}</td>
-                    <td>{/* Domaines */}</td>
-                    <td>{/* Type de texte */}</td>
-                    <td>{/* Domaine d'activité */}</td>
-                    <td>{/* Pays ou Région */}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{/* Fichier */}</td>
+                    <td>{n.domaine_activite}</td>
+                    <td>{n.source}</td>
+                    <td>{n.fichier}</td>
                     <td>{n.date_pub}</td>
+                  
+                   
                     <td>
                       <button
                         className="btn btn-sm btn-outline-primary me-2"

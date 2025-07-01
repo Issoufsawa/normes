@@ -4,6 +4,10 @@ import api from '../utils/api' // ta config axios/fetch
 export default function NormesPubliquesPage() {
   const [normes, setNormes] = useState([])
   const [search, setSearch] = useState('')
+  const [typeTexte, setTypeTexte] = useState('');
+const [domaineActivite, setDomaineActivite] = useState('');
+const [paysRegion, setPaysRegion] = useState('');
+const [applyFilters, setApplyFilters] = useState(false);
 
   useEffect(() => {
     async function fetchNormes() {
@@ -17,12 +21,23 @@ export default function NormesPubliquesPage() {
     fetchNormes()
   }, [])
 
-  const filtered = normes.filter(n =>
-    n.titre.toLowerCase().includes(search.toLowerCase()) ||
-    n.categorie.toLowerCase().includes(search.toLowerCase()) ||
-    n.mots_cles.toLowerCase().includes(search.toLowerCase()) ||
-    n.date_pub.includes(search)
-  )
+  const filtered = normes.filter(n => {
+  const s = search.toLowerCase();
+  const matchesSearch =
+    n.domaine.toLowerCase().includes(s) ||
+    n.categorie.toLowerCase().includes(s) ||
+    n.description_du_texte.toLowerCase().includes(s) ||
+    n.source.toLowerCase().includes(s);
+
+  if (!applyFilters) return matchesSearch;
+
+  const matchesTypeTexte = typeTexte === '' || n.categorie.toLowerCase() === typeTexte.toLowerCase();
+  const matchesDomaineActivite = domaineActivite === '' || n.domaine_activite.toLowerCase().includes(domaineActivite.toLowerCase());
+  const matchesPaysRegion = paysRegion === '' || n.pays_ou_region.toLowerCase().includes(paysRegion.toLowerCase());
+
+  return matchesSearch && matchesTypeTexte && matchesDomaineActivite && matchesPaysRegion;
+});
+
 
   return (
     <>
@@ -63,14 +78,13 @@ export default function NormesPubliquesPage() {
         </div>
       </nav>
 
-      {/* Hero + section inputs dans la même section */}
 <section
   className="hero-section d-flex flex-column justify-content-center align-items-center bg-dark text-white"
-  style={{ minHeight: '50vh', paddingBottom: '4rem' , marginTop: '0',paddingTop: '0' }} // espace en bas pour inputs
+  style={{ minHeight: '50vh', paddingBottom: '4rem', marginTop: '0', paddingTop: '0' }}
 >
   <div className="container text-center mb-4">
     <h1>📚 Catalogue des Normes Archivistiques</h1>
-    <form className="custom-form mt-4 mb-5">
+    <form className="custom-form mt-4 mb-5" onSubmit={e => e.preventDefault()}>
       <div className="input-group input-group-lg">
         <span className="input-group-text bi-search"></span>
         <input
@@ -85,44 +99,63 @@ export default function NormesPubliquesPage() {
     </form>
   </div>
 
-  <div className="container" >
-    <form className="row g-3 justify-content-center">
-     <div className="col-md-3 col-12">
-    <select className="form-control" name="input1">
-    <option value="">Type de texte</option>
-    <option value="code">code</option>
-    <option value="lois">lois</option>
-    <option value="règlement">règlement</option>
-    <option value="circulaire">circulaire</option>
-    <option value="ordonance">ordonnance</option>
-    <option value="décret">décret</option>
-    <option value="arrêté">arrêté</option>
-    <option value="autre">Autre</option>
-     </select>
-        </div> 
+  <div className="container">
+    <form className="row g-3 justify-content-center" onSubmit={e => e.preventDefault()}>
+      <div className="col-md-3 col-12">
+        <select
+          className="form-control"
+          value={typeTexte}
+          onChange={e => setTypeTexte(e.target.value)}
+        >
+          <option value="">Type de texte</option>
+          <option value="code">code</option>
+          <option value="lois">lois</option>
+          <option value="règlement">règlement</option>
+          <option value="circulaire">circulaire</option>
+          <option value="ordonance">ordonnance</option>
+          <option value="décret">décret</option>
+          <option value="arrêté">arrêté</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
 
       <div className="col-md-3 col-12">
         <input
           type="text"
           className="form-control"
           placeholder="Domaine d'activités"
-          name="input2"
+          value={domaineActivite}
+          onChange={e => setDomaineActivite(e.target.value)}
         />
       </div>
-    <div className="col-md-3 col-12">
-    <select className="form-control" name="input3">
-    <option value="">Pays ou Région</option>
-    <option value="ci">COTE D'IVOIRE</option>
-    <option value="cm">CAMEROUN</option>
-    <option value="bn">BENIN</option>
-    <option value="gb">GABON</option>
-    </select>
-    </div>
 
-      <div className="col-md-2 col-12 d-grid">
-        <button type="submit" className="btn btn-primary w-100">
-          Appliquer 
-        </button>
+      <div className="col-md-3 col-12">
+        <select
+          className="form-control"
+          value={paysRegion}
+          onChange={e => setPaysRegion(e.target.value)}
+        >
+          <option value="">Pays ou Région</option>
+          <option value="cote d'ivoire">COTE D'IVOIRE</option>
+          <option value="cameroun">CAMEROUN</option>
+          <option value="benin">BENIN</option>
+          <option value="gabon">GABON</option>
+        </select>
+      </div>
+
+      <div className="col-md-2 col-12 d-flex align-items-center">
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="applyCheckbox"
+            checked={applyFilters}
+            onChange={e => setApplyFilters(e.target.checked)}
+          />
+          <label className="form-check-label" htmlFor="applyCheckbox">
+            Appliquer
+          </label>
+        </div>
       </div>
     </form>
   </div>
@@ -143,36 +176,52 @@ export default function NormesPubliquesPage() {
                 <tr>
                   {[
                    'Description du texte','Référence du texte','Documents concernés','Domaines',
-                    'Type de texte','Domaine d\'activité','Pays ou Région','Source','Fichier',
-                    'Validité du texte','Télécharger'
+                    'Type de texte','Domaine d\'activité','Pays ou Région','Source',
+                    'Validité du texte','Télécharger le fichier'
                   ].map(h => (
                     <th key={h}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan="12" className="text-center p-4">
-                      Aucune norme trouvée.
-                    </td>
-                  </tr>
-                ) : filtered.map(n => (
-                  <tr key={n.id}>
-                    <td>{n.titre}</td>
-                    <td>{n.categorie}</td>
-                    <td>{n.date_pub}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                    <td>{n.mots_cles}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {filtered.length === 0 ? (
+    <tr>
+      <td colSpan="12" className="text-center p-4">
+        Aucune norme trouvée.
+      </td>
+    </tr>
+  ) : (
+    filtered.map(n => (
+      <tr key={n.id}>
+        <td>{n.description_du_texte}</td>
+        <td>{n.reference_du_texte}</td>
+        <td>{n.document_concerne}</td>
+        <td>{n.domaine}</td>
+        <td>{n.categorie}</td>
+        <td>{n.domaine_activite}</td>
+        <td>{n.pays_ou_region}</td>
+        <td>{n.source}</td>
+        <td>{n.date_pub}</td>
+        <td>
+          {n.fichier ? (
+            <a
+              href={`http://localhost:3000/uploads/${n.fichier}`}
+              className="btn btn-sm btn-success"
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Télécharger
+            </a>
+          ) : (
+            <span className="text-muted">Aucun fichier</span>
+          )}
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
+
             </table>
           </div>
         </div>

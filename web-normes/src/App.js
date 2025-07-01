@@ -4,6 +4,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NormesPubliques from "./pages/NormesPubliques";
 import AjouterNorme from "./pages/AjouterNorme";
+import CreAdmin from  "./pages/CreAdmin";
 
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
               <Route path="/ajouter-norme" element={
                 <ProtectedRoute><AjouterNorme /></ProtectedRoute>} />
                  <Route path="/créer-admin" element={
-                <ProtectedRoute><AjouterNorme /></ProtectedRoute>} />
+                <CreAdmin><CreAdmin/></CreAdmin>} />
     </Routes>
   );
 }
