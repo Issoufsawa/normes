@@ -44,10 +44,15 @@ const [applyFilters, setApplyFilters] = useState(false);
       {/* Navbar */}
       <nav className="navbar navbar-expand-lg">
         <div className="container">
-          <a className="navbar-brand" href="/">
-            <i className="bi-back"></i>
-            <span>Topic</span>
-          </a>
+         <a className="navbar-brand" href="/">
+              <img 
+              src="logo.jpeg" 
+                alt="Logo Topic" 
+                style={{ height: '90px', width: 'auto' }} 
+               />
+          
+             </a>
+
           <button className="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#nav"
             aria-expanded="false">
@@ -56,9 +61,9 @@ const [applyFilters, setApplyFilters] = useState(false);
           <div className="collapse navbar-collapse" id="nav">
             <ul className="navbar-nav ms-lg-5 me-lg-auto">
              {['Home','Browse Topics','How it works','FAQs','Contact'].map(t => (
-    <li key={t} className="nav-item">
-      <a className="nav-link text-dark" href="#">{t}</a>
-    </li>
+              <li key={t} className="nav-item">
+                 <a className="nav-link text-dark" href="#">{t}</a>
+          </li>
               ))}
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle text-dark" href="#"
@@ -202,21 +207,33 @@ const [applyFilters, setApplyFilters] = useState(false);
         <td>{n.pays_ou_region}</td>
         <td>{n.source}</td>
         <td>{n.date_pub}</td>
-        <td>
-          {n.fichier ? (
-            <a
-              href={`http://localhost:3000/uploads/${n.fichier}`}
-              className="btn btn-sm btn-success"
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Télécharger
-            </a>
-          ) : (
-            <span className="text-muted">Aucun fichier</span>
-          )}
-        </td>
+       <td>
+  {n.fichier ? (
+    <div className="d-flex flex-column gap-2">
+      <a
+        href={`http://localhost:3000/uploads/${n.fichier}`}
+        className="btn btn-sm btn-primary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Visualiser
+      </a>
+      <a
+        href={`http://localhost:3000/uploads/${n.fichier}`}
+        className="btn btn-sm btn-success"
+        download
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Télécharger
+      </a>
+    </div>
+  ) : (
+    <span className="text-muted">Aucun fichier</span>
+  )}
+</td>
+
+
       </tr>
     ))
   )}
@@ -236,9 +253,14 @@ const [applyFilters, setApplyFilters] = useState(false);
         <div className="container">
           <div className="row">
             <div className="col-md-3 mb-4">
-              <a className="navbar-brand" href="/">
-                <i className="bi-back"></i> Topic
-              </a>
+               <a className="navbar-brand" href="/">
+              <img 
+              src="logo.jpeg" 
+                alt="Logo Topic" 
+                style={{ height: '130px', width: 'auto' }} 
+               />
+          
+             </a>
             </div>
             <div className="col-md-3 col-6">
               <h6>Resources</h6>

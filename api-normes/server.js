@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use("/api/normes", normesRoutes);
 app.use("/api/admin", adminRoutes);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

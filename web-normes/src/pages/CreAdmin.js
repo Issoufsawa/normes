@@ -48,11 +48,14 @@ export default function CreAdmin() {
       {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg">
         <div className="container">
-          <a className="navbar-brand">
-            <i className="bi-back"></i>
-            <span>Admin Normes</span>
-          </a>
-
+          <a className="navbar-brand" >
+              <img 
+              src="logo.jpeg" 
+                alt="Logo Topic" 
+                style={{ height: '90px', width: 'auto' }} 
+               />
+          
+             </a>
           <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
             {[
               { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
@@ -100,9 +103,9 @@ export default function CreAdmin() {
         </div>
       </nav>
 
-      <h2 className="text-center mb-5">👤 Créer un administrateur</h2>
-
-      <section className="featured-section bg-light py-5">
+      
+    <div className="featured-section"><h2 className="text-center">👤 Créer un administrateur</h2></div>
+      <section className="featured-section bg py-5">
         <div className="container">
           <div className="mx-auto" style={{ maxWidth: "700px" }}>
             <form className="row g-3" onSubmit={handleSubmit}>
@@ -246,20 +249,43 @@ export default function CreAdmin() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="site-footer section-padding">
+     
+      {/* Footer */}
+      <footer className="site-footer section-padding bg-light py-4">
         <div className="container">
           <div className="row">
-            <div className="col-lg-6 col-12 mb-4 pb-2">
-              <a className="navbar-brand" href="/">
-                <i className="bi-back"></i>
-                <span>Topic</span>
-              </a>
+            <div className="col-md-3 mb-4">
+               <a className="navbar-brand" href="/">
+              <img 
+              src="logo.jpeg" 
+                alt="Logo Topic" 
+                style={{ height: '130px', width: 'auto' }} 
+               />
+          
+             </a>
             </div>
-            <div className="col-lg-6 col-12">
-              <p className="text-white">
-                &copy; {new Date().getFullYear()} Admin Dashboard | Normes Archivistiques
-              </p>
+            <div className="col-md-3 col-6">
+              <h6>Resources</h6>
+              <ul className="list-unstyled">
+                {['Home','How it works','FAQs','Contact'].map(t => (
+                  <li key={t}><a href="#">{t}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div className="col-md-3 col-6">
+              <h6>Information</h6>
+              <p><a href="tel:3052409671">305‑240‑9671</a></p>
+              <p><a href="mailto:info@company.com">info@company.com</a></p>
+            </div>
+            <div className="col-md-3">
+              <h6>Language</h6>
+              <select className="form-select">
+                <option>English</option>
+                <option>Thai</option>
+                <option>Myanmar</option>
+                <option>Arabic</option>
+              </select>
+              <p className="mt-3 small">&copy; 2048 Topic Listing Center.</p>
             </div>
           </div>
         </div>
