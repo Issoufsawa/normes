@@ -12,8 +12,6 @@ export default function CreAdmin() {
     fonction: "",
     whatsapp: "",
     email: "",
-    login: "",
-    password: "",
   });
 
   const handleChange = (e) => {
@@ -34,8 +32,6 @@ export default function CreAdmin() {
         fonction: "",
         whatsapp: "",
         email: "",
-        login: "",
-        password: "",
       });
     } catch (err) {
       console.error("❌ Erreur lors de la création :", err);
@@ -59,9 +55,10 @@ export default function CreAdmin() {
           <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
             {[
               { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
-              { text: "Créer un admin", to: "#" },
+              { text: "Créer un admin", to: "/créer-admin" },
+               { text: "Liste des admins", to: "/Liste-admin" },
               { text: "Liste des normes archivistiques", to: "/admin" },
-              { text: "Valider des normes archivistiques", to: "#" },
+              { text: "Valider des normes archivistiques", to: "/valider-norme" },
             ].map(({ text, to }) => (
               <li key={text} className="nav-item">
                 <Link className="nav-link text-dark" to={to}>
@@ -210,30 +207,6 @@ export default function CreAdmin() {
                   name="email"
                   placeholder="Email"
                   value={form.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="login"
-                  placeholder="Login"
-                  value={form.login}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="col-md-6">
-                <input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  placeholder="Mot de passe"
-                  value={form.password}
                   onChange={handleChange}
                   required
                 />

@@ -114,10 +114,48 @@ const downloadFile = (req, res) => {
   });
 };
 
+
+
+// POST - Créer une norme
+const createadmin = (req, res) => {
+  const {
+    civilite,
+    nom,
+    prenoms,
+    pays,
+    type_utilisateur,
+    fonction,
+    whatsapp,
+    email,
+    
+  } = req.body;
+  
+
+  const sql = `
+    INSERT INTO admin (
+      civilite, nom, prenoms, pays,
+       type_utilisateur, fonction, whatsapp,
+      email
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    civilite, nom, prenoms, pays,
+     type_utilisateur, fonction, whatsapp,
+    email, 
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: "admin créée avec succès", id: result.insertId });
+  });
+};
+
+
 module.exports = {
   getAllNormes,
   createNorme,
   updateNorme,
   deleteNorme,
   downloadFile,
+  createadmin
 };

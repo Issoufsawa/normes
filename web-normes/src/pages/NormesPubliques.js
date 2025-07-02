@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../utils/api' // ta config axios/fetch
+import { Link } from "react-router-dom";
 
 export default function NormesPubliquesPage() {
   const [normes, setNormes] = useState([])
@@ -76,9 +77,14 @@ const [applyFilters, setApplyFilters] = useState(false);
                 </ul>
               </li>
             </ul>
-            <div className="d-none d-lg-block">
-              <a href="#top" className="navbar-icon bi-person smoothscroll"></a>
-            </div>
+<div className="d-none d-lg-block"> 
+  <Link href="/login" passHref>
+    <a className="navbar-icon bi-person smoothscroll">
+      <span className="visually-hidden">Connexion</span>
+    </a>
+  </Link>
+</div>
+
           </div>
         </div>
       </nav>

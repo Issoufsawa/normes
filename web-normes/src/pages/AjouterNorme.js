@@ -95,8 +95,9 @@ export default function AjouterNorme() {
             {[
               { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
               { text: "Créer un admin", to: "/créer-admin" },
+               { text: "Liste des admins", to: "/Liste-admin" },
               { text: "Liste des normes archivistiques", to: "/admin" },
-              { text: "Valider des normes archivistiques", to: "#" },
+              { text: "Valider des normes archivistiques", to: "/valider-norme" },
             ].map(({ text, to }) => (
               <li key={text} className="nav-item">
                 <Link className="nav-link text-dark" to={to}>

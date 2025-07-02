@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const normesRoutes = require("./routes/normes");
 const adminRoutes = require("./routes/admin");
+const adminRoute = require("./routes/utilisateurs");
 dotenv.config();
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use("/api/normes", normesRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/utilisateurs", adminRoute);
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 3000;

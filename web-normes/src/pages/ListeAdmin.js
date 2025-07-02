@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../utils/api";
 import { Link } from "react-router-dom";
 
-export default function AdminDashboard() {
+export default function ListeAdmin() {
   const [normes, setNormes] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   {[
     { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
     { text: "Créer un admin", to:  "/créer-admin" },
-      { text: "Liste des admins", to: "/Liste-admin" },
+      { text: "Liste des admins", to:"/Liste-admin" },
     { text: "Liste des normes archivistiques", to: "/admin" },
     { text: "Valider des normes archivistiques", to: "/valider-norme" },
   ].map(({ text, to }) => (
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
       {/* TABLEAU */}
       <section className="featured-section">
         <div className="container">
-          <h2 className="mb-4">📋 Liste des normes archivistiques validées</h2>
+          <h2 className="mb-4">📋 Liste des Admins</h2>
 
           <input
             type="text"
@@ -124,16 +124,14 @@ export default function AdminDashboard() {
               <thead className="table-dark">
                 <tr>
 
-                  <th>Description du texte</th>
-                  <th>Référence du texte</th>
-                  <th>Documents concernés</th>
-                  <th>Domaines</th>
-                  <th>Type de texte</th>
-                  <th>Domaine d'activité</th>
-                  <th>Pays ou Région</th>
-                  <th>Source</th>
-                  <th>Fichier</th>
-                  <th>Validité du texte</th>
+                  <th>Civilité</th>
+                  <th>Nom</th>
+                  <th>Prénoms</th>
+                  <th>Pays</th>
+                  <th>Type d'utilisateur</th>
+                  <th>Fonction</th>
+                  <th>Numéro WhatsApp</th>
+                  <th>Email</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -148,38 +146,25 @@ export default function AdminDashboard() {
                     <td>{n.domaine_activite}</td>
                     <td>{n.pays_ou_region}</td>
                     <td>{n.source}</td>
-                    <td>{n.fichier}</td>
-                    <td>{n.date_pub}</td>
+                
+                 
                   
-              <td>
-              <div className="d-flex flex-wrap gap-2">
-              <button
-              className="btn btn-sm btn-success"
-               onClick={() => handleDelete(n)}
-                title="Activer le téléchargement"
-               >
-             📥 Activer le téléchargement
-          </button>
-
-           <button
-            className="btn btn-sm btn-warning"
-            onClick={() => handleDelete(n)}
-            title="Désactiver le téléchargement"
-           >
-             🚫 Désactiver le téléchargement
-           </button>
-
-           <button
-            className="btn btn-sm btn-danger"
-            onClick={() => handleDelete(n)}
-            title="Supprimer"
-           >
-      🗑️ Supprimer
-    </button>
-  </div>
-</td>
-
-
+                    <td>
+                          <div className="d-flex flex-wrap gap-2">
+                      <button
+                        className="btn btn-sm btn-primary me-2"
+                        onClick={() => handleEdit(n)}
+                      >
+                        ✏️ Modifier
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(n.id)}
+                      >
+                        🗑️ Supprimer
+                      </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
