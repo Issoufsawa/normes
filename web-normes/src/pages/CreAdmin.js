@@ -1,43 +1,63 @@
 import { useState } from "react";
 import api from "../utils/api";
-import { Link } from "react-router-dom";
+import NavMenu from "./NavMenu"; 
+import Footer from "./Footer";
 
 export default function CreAdmin() {
-  const [form, setForm] = useState({
-    civilite: "",
-    nom: "",
-    prenoms: "",
-    pays: "",
-    type_utilisateur: "",
-    fonction: "",
-    whatsapp: "",
-    email: "",
-  });
+ const [form, setForm] = useState({
+  civilite: "",
+  nom: "",
+  prenoms: "",
+  pays: "",
+  role: "",
+  fonction: "",
+  whatsapp: "",
+  email: "",
+ 
+});
+
+
+
+const [loading, setLoading] = useState(false);
+const [successMessage, setSuccessMessage] = useState("");
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post("/utilisateurs", form);
-      alert("✅ Administrateur créé avec succès !");
-      setForm({
-        civilite: "",
-        nom: "",
-        prenoms: "",
-        pays: "",
-        type_utilisateur: "",
-        fonction: "",
-        whatsapp: "",
-        email: "",
-      });
-    } catch (err) {
-      console.error("❌ Erreur lors de la création :", err);
-      alert("Erreur lors de la création de l'administrateur");
-    }
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await api.post("/utilisateurs", form);
+    setSuccessMessage("✅ Administrateur créé avec succès !");
+    setForm({
+      civilite: "",
+      nom: "",
+      prenoms: "",
+      pays: "",
+      role: "",
+      fonction: "",
+      whatsapp: "",
+      email: "",
+      mot_de_passe: "",
+    });
+
+    // Efface le message après 3 secondes
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 3000);
+
+  } catch (err) {
+    console.error("❌ Erreur lors de la création :", err);
+    alert("Erreur lors de la création de l'administrateur");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   return (
     <>
@@ -52,21 +72,8 @@ export default function CreAdmin() {
                />
           
              </a>
-          <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
-            {[
-              { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
-              { text: "Créer un admin", to: "/créer-admin" },
-               { text: "Liste des admins", to: "/Liste-admin" },
-              { text: "Liste des normes archivistiques", to: "/admin" },
-              { text: "Valider des normes archivistiques", to: "/valider-norme" },
-            ].map(({ text, to }) => (
-              <li key={text} className="nav-item">
-                <Link className="nav-link text-dark" to={to}>
-                  {text}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {/* NavMenu filtré selon le rôle */}
+                            <NavMenu />
 
           <div className="ms-auto">
             <div className="dropdown">
@@ -100,8 +107,39 @@ export default function CreAdmin() {
         </div>
       </nav>
 
-      
-    <div className="featured-section"><h2 className="text-center">👤 Créer un administrateur</h2></div>
+     {loading && (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    zIndex: 9999,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}>
+    <div className="text-center">
+      <div
+        className="spinner-border text-primary"
+        role="status"
+        style={{ width: '4rem', height: '4rem' }}
+      ></div>
+      <div className="mt-3">Création de l’administrateur...</div>
+    </div>
+  </div>
+)}
+  
+ {successMessage && (
+  <div className="alert alert-success text-center" role="alert">
+    {successMessage}
+  </div>
+)}
+ 
+
+
+    <div className="featured-section"><h2 className="text-center" style={{ color: 'yellow' }}>👤 Créer un administrateur</h2></div>
       <section className="featured-section bg py-5">
         <div className="container">
           <div className="mx-auto" style={{ maxWidth: "700px" }}>
@@ -110,6 +148,7 @@ export default function CreAdmin() {
                 <select
                   className="form-control"
                   name="civilite"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   value={form.civilite}
                   onChange={handleChange}
                   required
@@ -125,6 +164,7 @@ export default function CreAdmin() {
                 <input
                   type="text"
                   className="form-control"
+                  style={{ fontSize: "1.2rem", height: "50px" }}
                   name="nom"
                   placeholder="Nom"
                   value={form.nom}
@@ -137,6 +177,7 @@ export default function CreAdmin() {
                 <input
                   type="text"
                   className="form-control"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   name="prenoms"
                   placeholder="Prénoms"
                   value={form.prenoms}
@@ -144,10 +185,11 @@ export default function CreAdmin() {
                   required
                 />
               </div>
-
+    
               <div className="col-md-6">
                 <select
                   className="form-control"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   name="pays"
                   value={form.pays}
                   onChange={handleChange}
@@ -164,14 +206,14 @@ export default function CreAdmin() {
               <div className="col-md-6">
                 <select
                   className="form-control"
-                  name="type_utilisateur"
-                  value={form.type_utilisateur}
+                   style={{ fontSize: "1.2rem", height: "50px" }}
+                  name="role"
+                  value={form.role}
                   onChange={handleChange}
                   required
                 >
                   <option value="">Type d'utilisateur</option>
-                  <option value="Utilisateur inscrit">Utilisateur inscrit</option>
-                  <option value="Administrateur pays">Administrateur pays</option>
+                  <option value="Administrateur">Administrateur pays</option>
                   <option value="Super Administrateur">Super Administrateur</option>
                 </select>
               </div>
@@ -180,6 +222,7 @@ export default function CreAdmin() {
                 <input
                   type="text"
                   className="form-control"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   name="fonction"
                   placeholder="Fonction"
                   value={form.fonction}
@@ -192,6 +235,7 @@ export default function CreAdmin() {
                 <input
                   type="tel"
                   className="form-control"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   name="whatsapp"
                   placeholder="Numéro WhatsApp"
                   value={form.whatsapp}
@@ -204,6 +248,7 @@ export default function CreAdmin() {
                 <input
                   type="email"
                   className="form-control"
+                   style={{ fontSize: "1.2rem", height: "50px" }}
                   name="email"
                   placeholder="Email"
                   value={form.email}
@@ -211,58 +256,23 @@ export default function CreAdmin() {
                   required
                 />
               </div>
+                             
 
-              <div className="col-12 d-flex gap-2">
-                <button className="btn btn-primary" type="submit">
-                  Ajouter
-                </button>
-              </div>
+                
+               <button  style={{ fontSize: "1.2rem", height: "50px" }} className="btn btn-primary" type="submit" disabled={loading}>
+                
+                        Ajouter
+                      </button>
+
             </form>
           </div>
         </div>
       </section>
 
      
+      
       {/* Footer */}
-      <footer className="site-footer section-padding bg-light py-4">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-3 mb-4">
-               <a className="navbar-brand" href="/">
-              <img 
-              src="logo.jpeg" 
-                alt="Logo Topic" 
-                style={{ height: '130px', width: 'auto' }} 
-               />
-          
-             </a>
-            </div>
-            <div className="col-md-3 col-6">
-              <h6>Resources</h6>
-              <ul className="list-unstyled">
-                {['Home','How it works','FAQs','Contact'].map(t => (
-                  <li key={t}><a href="#">{t}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div className="col-md-3 col-6">
-              <h6>Information</h6>
-              <p><a href="tel:3052409671">305‑240‑9671</a></p>
-              <p><a href="mailto:info@company.com">info@company.com</a></p>
-            </div>
-            <div className="col-md-3">
-              <h6>Language</h6>
-              <select className="form-select">
-                <option>English</option>
-                <option>Thai</option>
-                <option>Myanmar</option>
-                <option>Arabic</option>
-              </select>
-              <p className="mt-3 small">&copy; 2048 Topic Listing Center.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+ <Footer/>
     </>
   );
 }

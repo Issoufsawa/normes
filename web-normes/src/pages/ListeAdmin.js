@@ -1,219 +1,192 @@
 import { useEffect, useState } from "react";
 import api from "../utils/api";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import NavMenu from "./NavMenu";
+import Footer from "./Footer";
 
 export default function ListeAdmin() {
-  const [normes, setNormes] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [search, setSearch] = useState("");
+const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; // Nombre d'éléments par page
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchNormes();
+    fetchAdmins();
   }, []);
 
-  const fetchNormes = async () => {
+  const fetchAdmins = async () => {
     try {
-      const res = await api.get("/normes");
-      setNormes(res.data);
+      const res = await api.get("/utilisateurs");
+      setAdmins(res.data);
     } catch (err) {
       console.error("Erreur de chargement :", err);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Supprimer cette norme ?")) return;
+    if (!window.confirm("Supprimer cet utilisateur ?")) return;
     try {
-      await api.delete(`/normes/${id}`);
-      fetchNormes();
+      await api.delete(`/utilisateurs/${id}`);
+      fetchAdmins();
     } catch (err) {
       console.error("Erreur suppression :", err);
       alert("Échec de suppression");
     }
   };
 
-  const handleEdit = (norme) => {
-    // Redirection vers une page ou ouverture d’un modal pourrait se faire ici
-    console.log("Norme à modifier :", norme);
-    alert("Fonction de modification à venir !");
+  const handleEdit = (utilisateur) => {
+    navigate(`/modifier-admin/${utilisateur.id}`);
   };
 
-  const filteredNormes = normes.filter(
-  (n) =>
-    n.titre?.toLowerCase().includes(search.toLowerCase()) ||
-    n.categorie?.toLowerCase().includes(search.toLowerCase()) ||
-    n.mots_cles?.toLowerCase().includes(search.toLowerCase()) ||
-    n.date_pub?.includes(search)
-);
+  const filteredAdmins = admins.filter((u) =>
+    [
+      u.nom,
+      u.prenoms,
+      u.pays,
+      u.type_utilisateur,
+      u.fonction,
+      u.whatsapp,
+      u.email,
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAdmins = filteredAdmins.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredAdmins.length / itemsPerPage);
 
   return (
     <>
-      {/* NAVBAR */}
       <nav className="navbar navbar-expand-lg">
         <div className="container">
-          <a className="navbar-brand" >
-              <img 
-              src="logo.jpeg" 
-                alt="Logo Topic" 
-                style={{ height: '90px', width: 'auto' }} 
-               />
-          
-             </a>
-
-        <ul className="navbar-nav d-flex flex-row gap-3 ms-4">
-  {[
-    { text: "Ajouter une nouvelle norme", to: "/ajouter-norme" },
-    { text: "Créer un admin", to:  "/créer-admin" },
-      { text: "Liste des admins", to:"/Liste-admin" },
-    { text: "Liste des normes archivistiques", to: "/admin" },
-    { text: "Valider des normes archivistiques", to: "/valider-norme" },
-  ].map(({ text, to }) => (
-    <li key={text} className="nav-item">
-      <Link className="nav-link text-dark" to={to}>
-        {text}
-      </Link>
-    </li>
-  ))}
-</ul>
-
-          <div className="ms-auto">
-            <div className="dropdown">
-              <button
-                className="btn btn-outline-secondary dropdown-toggle"
-                type="button"
-                id="userDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i className="bi-person-circle me-2"></i>Compte
-              </button>
-              <ul
-                className="dropdown-menu dropdown-menu-end"
-                aria-labelledby="userDropdown"
-              >
-                <li>
-                  <button
-                    className="dropdown-item text-danger"
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      window.location.href = "/login";
-                    }}
-                  >
-                    🔒 Déconnexion
-                  </button>
-                </li>
-              </ul>
-            </div>
+          <Link className="navbar-brand" to="#">
+            <img src="logo.jpeg" alt="Logo Topic" style={{ height: 90 }} />
+          </Link>
+          <NavMenu />
+          <div className="ms-auto dropdown">
+            <button
+              className="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+            >
+              <i className="bi-person-circle me-2"></i>Compte
+            </button>
+            <ul className="dropdown-menu dropdown-menu-end">
+              <li>
+                <button
+                  className="dropdown-item text-danger"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "/login";
+                  }}
+                >
+                  🔒 Déconnexion
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </nav>
 
-      {/* TABLEAU */}
       <section className="featured-section">
         <div className="container">
-          <h2 className="mb-4">📋 Liste des Admins</h2>
+          <h2 className="mb-4" style={{ color: 'yellow', textAlign: 'center' }}>📋 Liste des administrateurs</h2>
 
           <input
             type="text"
             className="form-control mb-3"
-            placeholder="🔍 Rechercher par titre, catégorie, mots-clés ou date"
+            placeholder="🔍 Rechercher par nom, pays, fonction ou e‑mail"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
           />
 
           <div className="table-responsive">
             <table className="table table-bordered table-hover table-striped">
               <thead className="table-dark">
                 <tr>
-
                   <th>Civilité</th>
                   <th>Nom</th>
                   <th>Prénoms</th>
                   <th>Pays</th>
                   <th>Type d'utilisateur</th>
                   <th>Fonction</th>
-                  <th>Numéro WhatsApp</th>
+                  <th>WhatsApp</th>
                   <th>Email</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredNormes.map((n) => (
-                  <tr key={n.id}>
-                    <td>{n.description_du_texte}</td>
-                    <td>{n.reference_du_texte}</td>
-                    <td>{n.document_concerne}</td>
-                    <td>{n.domaine}</td>
-                    <td>{n.categorie}</td>
-                    <td>{n.domaine_activite}</td>
-                    <td>{n.pays_ou_region}</td>
-                    <td>{n.source}</td>
-                
-                 
-                  
+                {currentAdmins.map((u) => (
+                  <tr key={u.id}>
+                    <td>{u.civilite}</td>
+                    <td>{u.nom}</td>
+                    <td>{u.prenoms}</td>
+                    <td>{u.pays}</td>
+                    <td>{u.type_utilisateur}</td>
+                    <td>{u.fonction}</td>
+                    <td>{u.whatsapp}</td>
+                    <td>{u.email}</td>
                     <td>
-                          <div className="d-flex flex-wrap gap-2">
-                      <button
-                        className="btn btn-sm btn-primary me-2"
-                        onClick={() => handleEdit(n)}
-                      >
-                        ✏️ Modifier
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(n.id)}
-                      >
-                        🗑️ Supprimer
-                      </button>
+                      <div className="d-flex flex-wrap gap-2">
+                        <button
+                          className="btn btn-sm btn-primary"
+                          onClick={() => handleEdit(u)}
+                        >
+                          ✏️ Modifier
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDelete(u.id)}
+                        >
+                          🗑️ Supprimer
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))}
+
+                {filteredAdmins.length === 0 && (
+                  <tr>
+                    <td colSpan="9" className="text-center">
+                      Aucun administrateur trouvé.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
+
+            {totalPages > 1 && (
+              <nav className="mt-3">
+                <ul className="pagination justify-content-center">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <li
+                      key={page}
+                      className={`page-item ${page === currentPage ? "active" : ""}`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
           </div>
         </div>
       </section>
 
-      
-      {/* Footer */}
-      <footer className="site-footer section-padding bg-light py-4">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-3 mb-4">
-               <a className="navbar-brand" href="/">
-              <img 
-              src="logo.jpeg" 
-                alt="Logo Topic" 
-                style={{ height: '130px', width: 'auto' }} 
-               />
-          
-             </a>
-            </div>
-            <div className="col-md-3 col-6">
-              <h6>Resources</h6>
-              <ul className="list-unstyled">
-                {['Home','How it works','FAQs','Contact'].map(t => (
-                  <li key={t}><a href="#">{t}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div className="col-md-3 col-6">
-              <h6>Information</h6>
-              <p><a href="tel:3052409671">305‑240‑9671</a></p>
-              <p><a href="mailto:info@company.com">info@company.com</a></p>
-            </div>
-            <div className="col-md-3">
-              <h6>Language</h6>
-              <select className="form-select">
-                <option>English</option>
-                <option>Thai</option>
-                <option>Myanmar</option>
-                <option>Arabic</option>
-              </select>
-              <p className="mt-3 small">&copy; 2048 Topic Listing Center.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer/>
     </>
   );
 }

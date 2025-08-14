@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+
+.fade {
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.fade.hidden {
+  opacity: 0;
+}
+
+
+.fade-message.visible {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+.fade-message.hidden {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}

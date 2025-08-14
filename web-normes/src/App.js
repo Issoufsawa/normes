@@ -7,6 +7,9 @@ import AjouterNorme from "./pages/AjouterNorme";
 import CreAdmin from  "./pages/CreAdmin";
 import ValiderNorme from  "./pages/ValiderNorme";
 import ListeAdmin from  "./pages/ListeAdmin";
+import ModifierAdmin from "./pages/ModifierAdmin";
+import ModifierNorme from "./pages/ModifierNorme";
+import SetPasswordPage from "./pages/SetPasswordPage";
 
 function App() {
   return (
@@ -20,6 +23,10 @@ function App() {
       <Route path="/créer-admin" element={<ProtectedRoute><CreAdmin/></ProtectedRoute>} />
       <Route path="/valider-norme" element={<ProtectedRoute><ValiderNorme/></ProtectedRoute>} />
       <Route path="/Liste-admin" element={<ProtectedRoute><ListeAdmin/></ProtectedRoute>} />
+      <Route path="/modifier-admin/:id" element={<ModifierAdmin />} />
+      <Route path="/modifier-norme/:id" element={<ModifierNorme />} />
+      <Route path="/creer-mot-de-passe" element={<SetPasswordPage />} />
+
     </Routes>
   );
 }
